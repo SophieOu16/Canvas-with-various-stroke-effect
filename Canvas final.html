@@ -4,13 +4,11 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>HTML5 Canvas</title>
-
 	<style type="text/css">
 		
        html body{
        	margin: 0;
-       	overflow: hidden;
-        
+       	overflow: hidden;        
        }
 
        main{
@@ -19,18 +17,13 @@
         height: 700px;
         display: flex;
         align-items: center;
-        justify-content: center;
-
-        
+        justify-content: center;        
        }
-     
-
       
        canvas{
        	overflow: hidden;
         margin: 10px;
         border: 5px solid orange;
-
        }
 
        section{
@@ -76,10 +69,7 @@
         width: 120px;
       
      }
-
-
-
-	</style>
+</style>
 </head>
 <body>
     
@@ -112,8 +102,7 @@
     </form>
 
     <article id="intro"><p>This is a canvas with three parameters to adjust the effect of the stroke.</p><p> Move the mouse to the canvas, click and drag, draw what you want.</p> <p>Enjoy &#128513;</p></article>
-        
-        
+                
     </section>
   </main>
 
@@ -123,8 +112,6 @@
     const favcolor=document.querySelector('#favcolor');
     const favsize=document.querySelector('#favsize');
     const rainbow=document.querySelector('#rainbow');
-
-
 
    if(canvas.getContext){
     var ctx=canvas.getContext('2d');
@@ -188,14 +175,11 @@
         ctx.fillStyle=favcolor.value;
         ctx.strokeStyle=favcolor.value;
 
-
-
     });
 
     //when the size changes, the value will be sent to the stroke.
 
      favsize.addEventListener('change',()=>ctx.lineWidth=favsize.value);
-
 
   //define the rainbow effect;
 
@@ -233,7 +217,6 @@
     lastY=y;
    
    }
-
   
 // make the button to toggle between rainbow effect and normal style.
 
@@ -245,7 +228,6 @@ rainbow.addEventListener('click',function(){
     canvas.removeEventListener('mousemove',draw);
     canvas.addEventListener('mousemove', rainbowStroke);
     }
-
 
     else{
          rainbow.value="On";
@@ -271,12 +253,10 @@ rainbow.addEventListener('click',function(){
     rainbow.value=isRainbow?"Off":"On";
     
     if(isRainbow){
-    
-   
+      
     canvas.removeEventListener('mousemove',draw);
     canvas.addEventListener('mousemove', rainbowStroke);
     }
-
 
     else{
 
@@ -292,22 +272,6 @@ rainbow.addEventListener('click',function(){
   });
 
   */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     </script>
 </body>
 </html>
