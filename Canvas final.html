@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>HTML5 Canvas</title>
+
+	<style type="text/css">
+		
+       html body{
+       	margin: 0;
+       	overflow: hidden;
+        
+       }
+
+       main{
+        overflow: hidden;
+        margin: 3px;
+        height: 700px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        
+       }
+     
+
+      
+       canvas{
+       	overflow: hidden;
+        margin: 10px;
+        border: 5px solid orange;
+
+       }
+
+       section{
+        width: 300px;
+        height: 600px;
+        margin: 10px;
+        font-family: Arial,sans-serif;
+        font-size:25px ;
+       
+       }
+
+       #intro{
+        margin-top: 50px;
+        font-style:italic;
+       }
+
+     .favcolor{
+
+        margin-top: 20px;
+        margin-bottom: 20px;
+     }
+
+     .favsize{
+        margin-top: 20px;
+        margin-bottom: 20px;
+     }
+
+     .rainbow{
+        margin-top: 20px;
+        margin-bottom: 20px;
+     }
+
+     #rainbow{
+        padding: 10px;
+        text-align: center;
+        background-color: orange;
+        color: white;
+        border:1px solid orange;
+        border-radius: 10px;
+     }
+
+     #favcolor{
+        width: 120px;
+      
+     }
+
+
+
+	</style>
+</head>
+<body>
+    
+   <main>
+
+	<canvas id="draw" width="1000" height="600" style="overflow: auto;"></canvas>
+    <section class="options">
+
+    <form class="favcolor">
+        <label for="favcolor">Stroke Color:</label>
+       
+        <input type="color" id="favcolor" name="favcolor">
+        <!-- set a color input to select color -->
+    </form>
+
+    <form class="favsize">
+        <label for="favsize">Stroke Size:</label>
+      
+        <input type="range" id="favsize" name="favsize" min="10" max="100">
+
+        <!-- set a range input to change size -->
+    </form>
+
+     <form class="rainbow">
+        <label for="rainbow">Rainbow Effect</label>
+      
+        <input type="button" id="rainbow" name="rainbow" value="On" >
+
+        <!-- set a button input to toggle between rainbow stroke effect and normal style -->
+    </form>
+
+    <article id="intro"><p>This is a canvas with three parameters to adjust the effect of the stroke.</p><p> Move the mouse to the canvas, click and drag, draw what you want.</p> <p>Enjoy &#128513;</p></article>
+        
+        
+    </section>
+  </main>
+
+    <script type="text/javascript">
+        
+    const canvas=document.querySelector('#draw');
+    const favcolor=document.querySelector('#favcolor');
+    const favsize=document.querySelector('#favsize');
+    const rainbow=document.querySelector('#rainbow');
+
+
+
+   if(canvas.getContext){
+    var ctx=canvas.getContext('2d');
+
+    }
+
+    else{
+        console.log("canvas-unsupported code here");
+    }
+    
+    let isDrawing= false;
+    let isRainbow=false;
+
+    let lastX=0;
+    let lastY=0;
+
+    ctx.lineWidth=30;
+    ctx.lineCap="round";
+    ctx.lineJoin="round";
+    ctx.strokeStyle="black";
+    ctx.fillStyle="black";
+
+    let hue=0;
+    let direction=true;
+    let x=0;
+    let y=0;
+
+    function draw(e){
+        if(!isDrawing){
+            return 
+        }
+
+        x=e.offsetX;
+        y=e.offsetY;
+
+        //control drawing path
+        ctx.beginPath();
+        ctx.moveTo(lastX,lastY);
+        ctx.lineTo(x,y);
+        ctx.stroke();
+
+        lastX=x;
+        lastY=y;
+
+    };
+
+    canvas.addEventListener('mousedown',(e)=>{
+        isDrawing=true;
+        lastX=e.offsetX;
+        lastY=e.offsetY;
+    });
+
+    canvas.addEventListener('mousemove',draw);
+    canvas.addEventListener('mouseup',()=>isDrawing=false);
+    canvas.addEventListener('mouseout',()=>isDrawing=false);
+
+    //when the color changes, the value will be sent to the stroke.
+
+    favcolor.addEventListener('change',()=>{
+
+        ctx.fillStyle=favcolor.value;
+        ctx.strokeStyle=favcolor.value;
+
+
+
+    });
+
+    //when the size changes, the value will be sent to the stroke.
+
+     favsize.addEventListener('change',()=>ctx.lineWidth=favsize.value);
+
+
+  //define the rainbow effect;
+
+   function rainbowStroke(e){
+    if(!isDrawing){
+        return ;
+    }
+
+    x=e.offsetX;
+    y=e.offsetY;
+
+    ctx.strokeStyle=`hsl(${hue},90%,50%)`;
+    if(hue>=360){
+        hue=0;
+    }
+    hue++;
+
+    if(ctx.lineWidth>120||ctx.lineWidth<10){
+        direction=!direction;
+
+    }
+
+    if(direction){
+        ctx.lineWidth++;
+    }else{
+        ctx.lineWidth--;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(lastX,lastY);
+    ctx.lineTo(x,y);
+    ctx.stroke();
+
+    lastX=x;
+    lastY=y;
+   
+   }
+
+  
+// make the button to toggle between rainbow effect and normal style.
+
+rainbow.addEventListener('click',function(){
+    
+    if(rainbow.value=="On"){
+    
+    rainbow.value="Off"
+    canvas.removeEventListener('mousemove',draw);
+    canvas.addEventListener('mousemove', rainbowStroke);
+    }
+
+
+    else{
+         rainbow.value="On";
+        ctx.fillStyle=favcolor.value;
+        ctx.strokeStyle=favcolor.value;
+        ctx.lineWidth=favsize.value
+       
+        canvas.removeEventListener('mousemove',rainbowStroke);
+        //we need to remove previous event listener in order to 
+        //make the new event listener work properly.
+
+        canvas.addEventListener('mousemove', draw);
+    }
+
+  });
+
+//an altenative way to fulfill this button function.
+/*
+  rainbow.addEventListener('click',function(){
+
+
+    isRainbow=!isRainbow;
+    rainbow.value=isRainbow?"Off":"On";
+    
+    if(isRainbow){
+    
+   
+    canvas.removeEventListener('mousemove',draw);
+    canvas.addEventListener('mousemove', rainbowStroke);
+    }
+
+
+    else{
+
+        ctx.fillStyle=favcolor.value;
+        ctx.strokeStyle=favcolor.value;
+        ctx.lineWidth=favsize.value
+       
+        canvas.removeEventListener('mousemove',rainbowStroke);
+
+        canvas.addEventListener('mousemove', draw);
+    }
+
+  });
+
+  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
